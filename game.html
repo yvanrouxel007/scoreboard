@@ -69,6 +69,22 @@
             cursor: pointer;
         }
         
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .rack-number {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
         .players-container {
             flex: 1;
             display: flex;
@@ -275,6 +291,10 @@
                 </div>
             </div>
         </div>
+        
+        <div class="footer">
+            <div class="rack-number" id="rackNumber">Rack 1</div>
+        </div>
     </div>
     
     <div class="modal" id="winnerModal">
@@ -335,6 +355,13 @@
                 section1.classList.remove('breaking');
                 section2.classList.add('breaking');
             }
+            
+            updateRackNumber();
+        }
+        
+        function updateRackNumber() {
+            const totalRacks = gameData.score1 + gameData.score2 + 1;
+            document.getElementById('rackNumber').textContent = `Rack ${totalRacks}`;
         }
         
         function incrementScore(player) {
