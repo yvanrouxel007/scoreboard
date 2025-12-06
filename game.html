@@ -109,16 +109,21 @@
             align-items: center;
             padding: 12px;
             position: relative;
-            background: #f5f5f5;
+            background: #e8e8e8;
             overflow: hidden;
         }
         
         .player-section.breaking {
-            background: #f0f0f0;
+            background: #d8d8d8;
         }
         
         .player-section:first-child {
-            border-bottom: 3px solid #ddd;
+            border-bottom: 3px solid #ccc;
+            background: #f2f2f2;
+        }
+        
+        .player-section:first-child.breaking {
+            background: #e2e2e2;
         }
         
         .player-name {
@@ -169,16 +174,18 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            gap: 12px;
+            gap: 20px;
+            max-width: 600px;
         }
         
         .score-display-wrapper {
-            flex: 1;
+            flex: 0 0 auto;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             transition: all 0.2s;
+            min-width: 200px;
         }
         
         .score-display-wrapper:active {
