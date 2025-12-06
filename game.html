@@ -184,6 +184,48 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            gap: 30px;
+        }
+        
+        .rack-points-control {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .rack-points-control.show {
+            display: flex;
+        }
+        
+        .rack-points-display {
+            font-size: 60px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1;
+            user-select: none;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+        
+        .rack-point-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #ffffff;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .rack-point-btn:active {
+            transform: scale(0.95);
+            background: rgba(0, 0, 0, 0.5);
         }
         
         .score-display-wrapper {
@@ -335,6 +377,11 @@
                 <div class="player-name" id="player1Name">Player 1</div>
                 <div class="break-indicator" id="break1"></div>
                 <div class="score-controls">
+                    <div class="rack-points-control" id="rackPoints1Control">
+                        <button class="rack-point-btn" onclick="adjustRackPoints(1, 1);">+</button>
+                        <div class="rack-points-display" id="rackPoints1">0</div>
+                        <button class="rack-point-btn" onclick="adjustRackPoints(1, -1);">−</button>
+                    </div>
                     <div class="score-display-wrapper" onclick="incrementScore(1)">
                         <div class="score-display" id="score1">0</div>
                     </div>
@@ -349,6 +396,11 @@
                 <div class="player-name" id="player2Name">Player 2</div>
                 <div class="break-indicator" id="break2"></div>
                 <div class="score-controls">
+                    <div class="rack-points-control" id="rackPoints2Control">
+                        <button class="rack-point-btn" onclick="adjustRackPoints(2, 1);">+</button>
+                        <div class="rack-points-display" id="rackPoints2">0</div>
+                        <button class="rack-point-btn" onclick="adjustRackPoints(2, -1);">−</button>
+                    </div>
                     <div class="score-display-wrapper" onclick="incrementScore(2)">
                         <div class="score-display" id="score2">0</div>
                     </div>
@@ -415,6 +467,14 @@
         const raceText = gameData.raceTo === 'open' ? 'Open Race' : `Race to ${gameData.raceTo}`;
         const breakText = gameData.breakRule === 'alternate' ? 'Alternate Break' : 'Winner Breaks';
         document.getElementById('raceInfo').textContent = `${raceText} • ${breakText}`;
+        
+        // Show rack points if applicable
+        if (gameData.pointsPerRack) {
+            document.getElementById('rackPoints1Control').classList.add('show');
+            document.getElementById('rackPoints2Control').classList.add('show');
+            document.getElementById('rackPoints1').textContent = gameData.rackPoints1 || 0;
+            document.getElementById('rackPoints2').textContent = gameData.rackPoints2 || 0;
+        }
         
         updateBreakIndicator();
         
@@ -483,6 +543,58 @@
             }
             
             updateRackNumber();
+            localStorage.setItem('currentGame', JSON.stringify(gameData));
+        }
+        
+        function adjustRackPoints(player, amount) {
+            if (!gameData.pointsPerRack) return;
+            
+            if (player === 1) {
+                gameData.rackPoints1 = Math.max(0, gameData.rackPoints1 + amount);
+                document.getElementById('rackPoints1').textContent = gameData.rackPoints1;
+                
+                // Check if rack is won
+                if (gameData.rackPoints1 >= gameData.pointsPerRack) {
+                    gameData.score1++;
+                    document.getElementById('score1').textContent = gameData.score1;
+                    gameData.rackPoints1 = 0;
+                    gameData.rackPoints2 = 0;
+                    document.getElementById('rackPoints1').textContent = 0;
+                    document.getElementById('rackPoints2').textContent = 0;
+                    
+                    // Update breaker
+                    if (gameData.breakRule === 'winner') {
+                        gameData.currentBreaker = 1;
+                    } else {
+                        gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                    }
+                    updateBreakIndicator();
+                    checkWinner();
+                }
+            } else {
+                gameData.rackPoints2 = Math.max(0, gameData.rackPoints2 + amount);
+                document.getElementById('rackPoints2').textContent = gameData.rackPoints2;
+                
+                // Check if rack is won
+                if (gameData.rackPoints2 >= gameData.pointsPerRack) {
+                    gameData.score2++;
+                    document.getElementById('score2').textContent = gameData.score2;
+                    gameData.rackPoints1 = 0;
+                    gameData.rackPoints2 = 0;
+                    document.getElementById('rackPoints1').textContent = 0;
+                    document.getElementById('rackPoints2').textContent = 0;
+                    
+                    // Update breaker
+                    if (gameData.breakRule === 'winner') {
+                        gameData.currentBreaker = 2;
+                    } else {
+                        gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                    }
+                    updateBreakIndicator();
+                    checkWinner();
+                }
+            }
+            
             localStorage.setItem('currentGame', JSON.stringify(gameData));
         }
         
