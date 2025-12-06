@@ -304,7 +304,7 @@
         <div class="section-title">Race To</div>
         <div class="race-to-container">
             <div class="race-to-input-wrapper">
-                <input type="number" id="raceTo" class="race-to-input" placeholder="Enter racks" min="1" step="1">
+                <input type="number" id="raceTo" class="race-to-input" placeholder="Enter racks" min="1" step="1" onclick="deselectOpen()">
             </div>
             <button class="open-btn" id="openBtn" onclick="toggleOpen()">Open</button>
         </div>
@@ -338,6 +338,17 @@
                 openBtn.classList.add('selected');
                 raceInput.disabled = true;
                 raceInput.value = '';
+            }
+        }
+        
+        // Deselect open when clicking input field
+        function deselectOpen() {
+            const openBtn = document.getElementById('openBtn');
+            const raceInput = document.getElementById('raceTo');
+            
+            if (openBtn.classList.contains('selected')) {
+                openBtn.classList.remove('selected');
+                raceInput.disabled = false;
             }
         }
         
