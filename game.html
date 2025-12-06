@@ -114,7 +114,7 @@
         }
         
         .player-section.breaking {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
         }
         
         .player-section:first-child {
@@ -129,11 +129,37 @@
         }
         
         .break-indicator {
-            font-size: 13px;
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 8px;
-            height: 18px;
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            display: none;
+            align-items: center;
+            gap: 6px;
+            animation: breakPulse 2s ease-in-out infinite;
+        }
+        
+        .break-indicator.active {
+            display: flex;
+        }
+        
+        @keyframes breakPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+            }
         }
         
         .score-controls {
@@ -372,13 +398,15 @@
             const section2 = document.getElementById('player2Section');
             
             if (gameData.currentBreaker === 1) {
-                break1.textContent = '🎱 Breaking';
-                break2.textContent = '';
+                break1.innerHTML = '🎱 <span>Breaking</span>';
+                break1.classList.add('active');
+                break2.classList.remove('active');
                 section1.classList.add('breaking');
                 section2.classList.remove('breaking');
             } else {
-                break1.textContent = '';
-                break2.textContent = '🎱 Breaking';
+                break2.innerHTML = '🎱 <span>Breaking</span>';
+                break2.classList.add('active');
+                break1.classList.remove('active');
                 section1.classList.remove('breaking');
                 section2.classList.add('breaking');
             }
