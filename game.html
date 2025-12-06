@@ -377,6 +377,18 @@
         </div>
     </div>
     
+    <div class="modal" id="endGameModal">
+        <div class="modal-content">
+            <div class="winner-emoji">⚠️</div>
+            <div class="winner-text">End Game?</div>
+            <div class="winner-subtitle">Are you sure you want to end this game?</div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeEndGameModal()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="endGameConfirmed()">End Game</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         let gameData = JSON.parse(localStorage.getItem('currentGame'));
         
@@ -495,10 +507,16 @@
         }
         
         function confirmEndGame() {
-            if (confirm('Are you sure you want to end this game?')) {
-                saveToHistory();
-                window.location.href = 'index.html';
-            }
+            document.getElementById('endGameModal').classList.add('show');
+        }
+        
+        function closeEndGameModal() {
+            document.getElementById('endGameModal').classList.remove('show');
+        }
+        
+        function endGameConfirmed() {
+            saveToHistory();
+            window.location.href = 'index.html';
         }
         
         function saveToHistory() {
