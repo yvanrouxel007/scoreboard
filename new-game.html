@@ -267,6 +267,12 @@
             <button class="break-btn" data-break="winner">Winner Breaks</button>
         </div>
         
+        <div class="section-title">First Break</div>
+        <div class="break-options">
+            <button class="first-break-btn selected" data-breaker="1" id="firstBreakP1">Player 1</button>
+            <button class="first-break-btn" data-breaker="2" id="firstBreakP2">Player 2</button>
+        </div>
+        
         <button class="start-button" onclick="startGame()">Start Game</button>
     </div>
     
@@ -295,12 +301,32 @@
             });
         });
         
+        // First break selection
+        document.querySelectorAll('.first-break-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.first-break-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+        });
+        
+        // Update first break button labels when player names change
+        function updateFirstBreakLabels() {
+            const p1Name = document.getElementById('player1').value.trim() || 'Player 1';
+            const p2Name = document.getElementById('player2').value.trim() || 'Player 2';
+            document.getElementById('firstBreakP1').textContent = p1Name;
+            document.getElementById('firstBreakP2').textContent = p2Name;
+        }
+        
+        document.getElementById('player1').addEventListener('input', updateFirstBreakLabels);
+        document.getElementById('player2').addEventListener('input', updateFirstBreakLabels);
+        
         function startGame() {
             const player1 = document.getElementById('player1').value.trim() || 'Player 1';
             const player2 = document.getElementById('player2').value.trim() || 'Player 2';
             const gameType = document.querySelector('.game-type-btn.selected').dataset.game;
             const raceTo = document.querySelector('.race-btn.selected').dataset.race;
             const breakRule = document.querySelector('.break-btn.selected').dataset.break;
+            const firstBreaker = parseInt(document.querySelector('.first-break-btn.selected').dataset.breaker);
             
             const gameData = {
                 player1,
@@ -310,7 +336,7 @@
                 breakRule,
                 score1: 0,
                 score2: 0,
-                currentBreaker: 1,
+                currentBreaker: firstBreaker,
                 startTime: new Date().toISOString()
             };
             
