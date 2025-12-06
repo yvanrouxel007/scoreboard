@@ -190,6 +190,14 @@
             transform: scale(0.98);
         }
         
+        .points-per-rack-group {
+            display: none;
+        }
+        
+        .points-per-rack-group.show {
+            display: block;
+        }
+        
         .break-options {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -311,6 +319,11 @@
             <button class="open-btn" id="openBtn" onclick="toggleOpen()">Open</button>
         </div>
         
+        <div class="form-group points-per-rack-group" id="pointsPerRackGroup">
+            <label>Points per Rack</label>
+            <input type="number" id="pointsPerRack" placeholder="Enter points" min="1" step="1" value="">
+        </div>
+        
         <div class="section-title">Break Rule</div>
         <div class="break-options">
             <button class="break-btn selected" data-break="alternate">Alternate Break</button>
@@ -327,6 +340,37 @@
     </div>
     
     <script>
+        // Game type selection
+        document.querySelectorAll('.game-type-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.game-type-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                updatePointsPerRackVisibility();
+            });
+        });
+        
+        // Show/hide points per rack based on game type
+        function updatePointsPerRackVisibility() {
+            const gameType = document.querySelector('.game-type-btn.selected').dataset.game;
+            const pointsGroup = document.getElementById('pointsPerRackGroup');
+            const pointsInput = document.getElementById('pointsPerRack');
+            
+            if (gameType === '141' || gameType === 'bank' || gameType === 'onepocket') {
+                pointsGroup.classList.add('show');
+                // Set default values
+                if (gameType === '141') {
+                    pointsInput.value = 100;
+                } else if (gameType === 'bank') {
+                    pointsInput.value = 8;
+                } else if (gameType === 'onepocket') {
+                    pointsInput.value = 8;
+                }
+            } else {
+                pointsGroup.classList.remove('show');
+                pointsInput.value = '';
+            }
+        }
+        
         // Toggle open race button
         function toggleOpen() {
             const openBtn = document.getElementById('openBtn');
@@ -403,6 +447,7 @@
             const raceTo = openBtn.classList.contains('selected') ? 'open' : (raceToInput || 'open');
             const breakRule = document.querySelector('.break-btn.selected').dataset.break;
             const firstBreaker = parseInt(document.querySelector('.first-break-btn.selected').dataset.breaker);
+            const pointsPerRack = document.getElementById('pointsPerRack').value || null;
             
             const gameData = {
                 player1,
@@ -413,6 +458,9 @@
                 score1: 0,
                 score2: 0,
                 currentBreaker: firstBreaker,
+                pointsPerRack: pointsPerRack ? parseInt(pointsPerRack) : null,
+                rackPoints1: 0,
+                rackPoints2: 0,
                 startTime: new Date().toISOString()
             };
             
