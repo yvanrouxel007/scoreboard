@@ -138,50 +138,60 @@
         
         .score-controls {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
+            justify-content: center;
             width: 100%;
-            max-width: 400px;
             flex: 1;
-            justify-content: space-between;
+            gap: 12px;
         }
         
-        .score-up {
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            border: none;
+        .score-display-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
-            font-size: 32px;
-            color: #667eea;
             transition: all 0.2s;
-            flex-shrink: 0;
         }
         
-        .score-up:active {
-            transform: scale(0.95);
+        .score-display-wrapper:active {
+            transform: scale(0.98);
         }
         
         .score-display {
-            font-size: 96px;
+            font-size: 120px;
             font-weight: 700;
             color: #667eea;
             line-height: 1;
-            padding: 10px 0;
             user-select: none;
-            flex-shrink: 0;
         }
         
-        .score-down {
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            border: none;
+        .score-adjusters {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .score-btn {
+            width: 44px;
+            height: 44px;
+            background: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 32px;
-            color: #999;
-            flex-shrink: 0;
+            font-size: 20px;
+            color: #666;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .score-btn:active {
+            transform: scale(0.95);
+            background: #e0e0e0;
         }
         
         .score-down:active {
@@ -284,9 +294,13 @@
                 <div class="player-name" id="player1Name">Player 1</div>
                 <div class="break-indicator" id="break1"></div>
                 <div class="score-controls">
-                    <button class="score-up" onclick="incrementScore(1)">▲</button>
-                    <div class="score-display" id="score1">0</div>
-                    <button class="score-down" onclick="decrementScore(1)">▼</button>
+                    <div class="score-display-wrapper" onclick="incrementScore(1)">
+                        <div class="score-display" id="score1">0</div>
+                    </div>
+                    <div class="score-adjusters">
+                        <button class="score-btn" onclick="adjustScore(1, 1); event.stopPropagation();">+</button>
+                        <button class="score-btn" onclick="adjustScore(1, -1); event.stopPropagation();">−</button>
+                    </div>
                 </div>
             </div>
             
@@ -294,9 +308,13 @@
                 <div class="player-name" id="player2Name">Player 2</div>
                 <div class="break-indicator" id="break2"></div>
                 <div class="score-controls">
-                    <button class="score-up" onclick="incrementScore(2)">▲</button>
-                    <div class="score-display" id="score2">0</div>
-                    <button class="score-down" onclick="decrementScore(2)">▼</button>
+                    <div class="score-display-wrapper" onclick="incrementScore(2)">
+                        <div class="score-display" id="score2">0</div>
+                    </div>
+                    <div class="score-adjusters">
+                        <button class="score-btn" onclick="adjustScore(2, 1); event.stopPropagation();">+</button>
+                        <button class="score-btn" onclick="adjustScore(2, -1); event.stopPropagation();">−</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -400,15 +418,16 @@
             checkWinner();
         }
         
-        function decrementScore(player) {
-            if (player === 1 && gameData.score1 > 0) {
-                gameData.score1--;
+        function adjustScore(player, amount) {
+            if (player === 1) {
+                gameData.score1 = Math.max(0, gameData.score1 + amount);
                 document.getElementById('score1').textContent = gameData.score1;
-            } else if (player === 2 && gameData.score2 > 0) {
-                gameData.score2--;
+            } else {
+                gameData.score2 = Math.max(0, gameData.score2 + amount);
                 document.getElementById('score2').textContent = gameData.score2;
             }
             
+            updateRackNumber();
             localStorage.setItem('currentGame', JSON.stringify(gameData));
         }
         
