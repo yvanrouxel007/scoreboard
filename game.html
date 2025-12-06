@@ -32,12 +32,12 @@
         }
         
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 8px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             flex-shrink: 0;
         }
         
@@ -47,42 +47,51 @@
         }
         
         .game-type {
-            font-size: 15px;
+            font-size: 18px;
             font-weight: 700;
-            color: #1a1a1a;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .race-info {
-            font-size: 12px;
-            color: #666;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
             margin-top: 2px;
         }
         
         .end-game-btn {
-            padding: 6px 12px;
-            background: #dc3545;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.25);
             color: white;
-            border: none;
-            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .end-game-btn:active {
+            background: rgba(255, 255, 255, 0.35);
         }
         
         .footer {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 8px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
             flex-shrink: 0;
         }
         
         .rack-number {
-            font-size: 15px;
+            font-size: 20px;
             font-weight: 700;
-            color: #1a1a1a;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .players-container {
