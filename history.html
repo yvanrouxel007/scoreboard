@@ -192,6 +192,75 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            margin: 16px;
+        }
+        
+        .modal-emoji {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+        
+        .modal-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .modal-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .modal-btn-primary {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .modal-btn-secondary {
+            background: #e5e5e5;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -201,6 +270,18 @@
         <h1>Game History</h1>
         
         <div id="historyContent"></div>
+    </div>
+    
+    <div class="modal" id="clearModal">
+        <div class="modal-content">
+            <div class="modal-emoji">⚠️</div>
+            <div class="modal-text">Clear History?</div>
+            <div class="modal-subtitle">Are you sure you want to clear all game history? This cannot be undone.</div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeClearModal()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="confirmClearHistory()">Clear All</button>
+            </div>
+        </div>
     </div>
     
     <script>
@@ -275,10 +356,16 @@
         }
         
         function clearHistory() {
-            if (confirm('Are you sure you want to clear all game history? This cannot be undone.')) {
-                localStorage.removeItem('gameHistory');
-                window.location.reload();
-            }
+            document.getElementById('clearModal').classList.add('show');
+        }
+        
+        function closeClearModal() {
+            document.getElementById('clearModal').classList.remove('show');
+        }
+        
+        function confirmClearHistory() {
+            localStorage.removeItem('gameHistory');
+            window.location.reload();
         }
         
         renderHistory();
