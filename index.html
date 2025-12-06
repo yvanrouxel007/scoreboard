@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pool Scoreboard</title>
+    <meta name="description" content="Professional pool scoreboard for tracking 8-ball, 9-ball, 10-ball, and more">
+    <meta name="author" content="Yvan Rouxel">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 48px 32px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .logo {
+            text-align: center;
+            font-size: 96px;
+            margin-bottom: 24px;
+        }
+        
+        h1 {
+            color: #1a1a1a;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 48px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .button {
+            width: 100%;
+            padding: 20px;
+            border-radius: 16px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-height: 64px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .button-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .button-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            box-shadow: none;
+        }
+        
+        .button:active {
+            transform: scale(0.98);
+        }
+        
+        .button-primary:active {
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .button-icon {
+            font-size: 24px;
+        }
+        
+        .footer {
+            margin-top: 48px;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e5e5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎱</div>
+        <h1>Pool Scoreboard</h1>
+        <p class="subtitle">Professional scoreboard for tracking your pool games</p>
+        
+        <button class="button button-primary" onclick="window.location.href='new-game.html'">
+            <span class="button-icon">➕</span>
+            <span>New Game</span>
+        </button>
+        
+        <button class="button button-secondary" onclick="window.location.href='history.html'">
+            <span class="button-icon">📊</span>
+            <span>Game History</span>
+        </button>
+        
+        <div class="footer">
+            Made by Yvan Rouxel
+        </div>
+    </div>
+</body>
+</html>

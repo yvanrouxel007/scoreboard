@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Game - Pool Scoreboard</title>
+    <meta name="description" content="Track your pool game">
+    <meta name="author" content="Yvan Rouxel">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .game-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-info {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .game-type {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .race-info {
+            font-size: 13px;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        .end-game-btn {
+            padding: 8px 16px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .players-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .player-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            position: relative;
+            background: white;
+        }
+        
+        .player-section.breaking {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+        
+        .player-section:first-child {
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .player-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .break-indicator {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 16px;
+            height: 20px;
+        }
+        
+        .score-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .score-up {
+            width: 100%;
+            padding: 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 40px;
+            color: #667eea;
+            transition: all 0.2s;
+        }
+        
+        .score-up:active {
+            transform: scale(0.95);
+        }
+        
+        .score-display {
+            font-size: 120px;
+            font-weight: 700;
+            color: #667eea;
+            line-height: 1;
+            padding: 20px 0;
+            user-select: none;
+        }
+        
+        .score-down {
+            width: 100%;
+            padding: 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 40px;
+            color: #999;
+            transition: all 0.2s;
+        }
+        
+        .score-down:active {
+            transform: scale(0.95);
+        }
+        
+        @media (orientation: landscape) and (min-width: 600px) {
+            .players-container {
+                flex-direction: row;
+            }
+            
+            .player-section:first-child {
+                border-bottom: none;
+                border-right: 3px solid #667eea;
+            }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            margin: 16px;
+        }
+        
+        .winner-emoji {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+        
+        .winner-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .winner-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .modal-btn-secondary {
+            background: #e5e5e5;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <div class="game-info">
+                <div class="game-type" id="gameType">8-Ball</div>
+                <div class="race-info" id="raceInfo">Race to 5 • Alternate Break</div>
+            </div>
+            <button class="end-game-btn" onclick="confirmEndGame()">End Game</button>
+        </div>
+        
+        <div class="players-container">
+            <div class="player-section" id="player1Section">
+                <div class="player-name" id="player1Name">Player 1</div>
+                <div class="break-indicator" id="break1"></div>
+                <div class="score-controls">
+                    <button class="score-up" onclick="incrementScore(1)">▲</button>
+                    <div class="score-display" id="score1">0</div>
+                    <button class="score-down" onclick="decrementScore(1)">▼</button>
+                </div>
+            </div>
+            
+            <div class="player-section" id="player2Section">
+                <div class="player-name" id="player2Name">Player 2</div>
+                <div class="break-indicator" id="break2"></div>
+                <div class="score-controls">
+                    <button class="score-up" onclick="incrementScore(2)">▲</button>
+                    <div class="score-display" id="score2">0</div>
+                    <button class="score-down" onclick="decrementScore(2)">▼</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="winnerModal">
+        <div class="modal-content">
+            <div class="winner-emoji">🏆</div>
+            <div class="winner-text" id="winnerText">Player 1 Wins!</div>
+            <div class="winner-subtitle" id="winnerScore">7 - 3</div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="window.location.href='index.html'">Home</button>
+                <button class="modal-btn modal-btn-primary" onclick="window.location.href='new-game.html'">New Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let gameData = JSON.parse(localStorage.getItem('currentGame'));
+        
+        if (!gameData) {
+            window.location.href = 'new-game.html';
+        }
+        
+        // Initialize display
+        const gameTypeNames = {
+            '8ball': '8-Ball',
+            '9ball': '9-Ball',
+            '10ball': '10-Ball',
+            '141': '14.1',
+            'bank': 'Bank Pool',
+            'onepocket': 'One Pocket'
+        };
+        
+        document.getElementById('gameType').textContent = gameTypeNames[gameData.gameType] || gameData.gameType;
+        document.getElementById('player1Name').textContent = gameData.player1;
+        document.getElementById('player2Name').textContent = gameData.player2;
+        document.getElementById('score1').textContent = gameData.score1;
+        document.getElementById('score2').textContent = gameData.score2;
+        
+        const raceText = gameData.raceTo === 'open' ? 'Open Race' : `Race to ${gameData.raceTo}`;
+        const breakText = gameData.breakRule === 'alternate' ? 'Alternate Break' : 'Winner Breaks';
+        document.getElementById('raceInfo').textContent = `${raceText} • ${breakText}`;
+        
+        updateBreakIndicator();
+        
+        function updateBreakIndicator() {
+            const break1 = document.getElementById('break1');
+            const break2 = document.getElementById('break2');
+            const section1 = document.getElementById('player1Section');
+            const section2 = document.getElementById('player2Section');
+            
+            if (gameData.currentBreaker === 1) {
+                break1.textContent = '🎱 Breaking';
+                break2.textContent = '';
+                section1.classList.add('breaking');
+                section2.classList.remove('breaking');
+            } else {
+                break1.textContent = '';
+                break2.textContent = '🎱 Breaking';
+                section1.classList.remove('breaking');
+                section2.classList.add('breaking');
+            }
+        }
+        
+        function incrementScore(player) {
+            if (player === 1) {
+                gameData.score1++;
+                document.getElementById('score1').textContent = gameData.score1;
+                
+                if (gameData.breakRule === 'winner') {
+                    gameData.currentBreaker = 1;
+                } else {
+                    gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                }
+            } else {
+                gameData.score2++;
+                document.getElementById('score2').textContent = gameData.score2;
+                
+                if (gameData.breakRule === 'winner') {
+                    gameData.currentBreaker = 2;
+                } else {
+                    gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                }
+            }
+            
+            updateBreakIndicator();
+            localStorage.setItem('currentGame', JSON.stringify(gameData));
+            
+            checkWinner();
+        }
+        
+        function decrementScore(player) {
+            if (player === 1 && gameData.score1 > 0) {
+                gameData.score1--;
+                document.getElementById('score1').textContent = gameData.score1;
+            } else if (player === 2 && gameData.score2 > 0) {
+                gameData.score2--;
+                document.getElementById('score2').textContent = gameData.score2;
+            }
+            
+            localStorage.setItem('currentGame', JSON.stringify(gameData));
+        }
+        
+        function checkWinner() {
+            if (gameData.raceTo === 'open') return;
+            
+            const target = parseInt(gameData.raceTo);
+            if (gameData.score1 >= target) {
+                showWinner(1);
+            } else if (gameData.score2 >= target) {
+                showWinner(2);
+            }
+        }
+        
+        function showWinner(player) {
+            const winner = player === 1 ? gameData.player1 : gameData.player2;
+            document.getElementById('winnerText').textContent = `${winner} Wins!`;
+            document.getElementById('winnerScore').textContent = `${gameData.score1} - ${gameData.score2}`;
+            document.getElementById('winnerModal').classList.add('show');
+            
+            saveToHistory();
+        }
+        
+        function confirmEndGame() {
+            if (confirm('Are you sure you want to end this game?')) {
+                saveToHistory();
+                window.location.href = 'index.html';
+            }
+        }
+        
+        function saveToHistory() {
+            const history = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+            gameData.endTime = new Date().toISOString();
+            history.unshift(gameData);
+            
+            // Keep only last 50 games
+            if (history.length > 50) {
+                history.pop();
+            }
+            
+            localStorage.setItem('gameHistory', JSON.stringify(history));
+            localStorage.removeItem('currentGame');
+        }
+    </script>
+</body>
+</html>
