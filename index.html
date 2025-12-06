@@ -6,6 +6,9 @@
     <title>Pool Scoreboard</title>
     <meta name="description" content="Professional pool scoreboard for tracking 8-ball, 9-ball, 10-ball, and more">
     <meta name="author" content="Yvan Rouxel">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <style>
         * {
             margin: 0;
@@ -129,5 +132,13 @@
             Made by Yvan Rouxel
         </div>
     </div>
+    <script>
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed:', err));
+        }
+    </script>
 </body>
 </html>
