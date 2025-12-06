@@ -304,7 +304,7 @@
         <div class="section-title">Race To</div>
         <div class="race-to-container">
             <div class="race-to-input-wrapper">
-                <input type="number" id="raceTo" class="race-to-input" placeholder="Enter racks" min="1" step="1" onclick="deselectOpen()">
+                <input type="number" id="raceTo" class="race-to-input" placeholder="Enter racks" min="1" step="1" onfocus="deselectOpen()">
             </div>
             <button class="open-btn" id="openBtn" onclick="toggleOpen()">Open</button>
         </div>
@@ -341,16 +341,21 @@
             }
         }
         
-        // Deselect open when clicking input field
+        // Deselect open when focusing input field
         function deselectOpen() {
             const openBtn = document.getElementById('openBtn');
-            const raceInput = document.getElementById('raceTo');
-            
             if (openBtn.classList.contains('selected')) {
                 openBtn.classList.remove('selected');
-                raceInput.disabled = false;
             }
         }
+        
+        // Ensure input is enabled when trying to focus
+        document.addEventListener('DOMContentLoaded', function() {
+            const raceInput = document.getElementById('raceTo');
+            raceInput.addEventListener('mousedown', function() {
+                this.disabled = false;
+            });
+        });
         
         // Toggle open race checkbox
         function toggleOpenRace() {
