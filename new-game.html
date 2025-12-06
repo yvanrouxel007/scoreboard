@@ -132,7 +132,61 @@
             transform: scale(0.98);
         }
         
-
+        .race-to-container {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+        
+        .race-to-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        .race-to-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+            background: white;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .race-to-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .race-to-input:disabled {
+            background: #f5f5f5;
+            color: #999;
+        }
+        
+        .open-btn {
+            padding: 12px 20px;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap;
+        }
+        
+        .open-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .open-btn:active {
+            transform: scale(0.98);
+        }
         
         .break-options {
             display: grid;
@@ -247,13 +301,12 @@
             <button class="game-type-btn" data-game="onepocket">One Pocket</button>
         </div>
         
-        <div class="form-group">
-            <label>Race To</label>
-            <input type="number" id="raceTo" placeholder="Enter number of racks" min="1" step="1">
-            <label style="display: flex; align-items: center; margin-top: 8px; font-weight: 400; cursor: pointer;">
-                <input type="checkbox" id="openRace" style="margin-right: 8px; width: auto; cursor: pointer;" onchange="toggleOpenRace()">
-                Open (no race limit)
-            </label>
+        <div class="section-title">Race To</div>
+        <div class="race-to-container">
+            <div class="race-to-input-wrapper">
+                <input type="number" id="raceTo" class="race-to-input" placeholder="Enter racks" min="1" step="1">
+            </div>
+            <button class="open-btn" id="openBtn" onclick="toggleOpen()">Open</button>
         </div>
         
         <div class="section-title">Break Rule</div>
@@ -272,15 +325,19 @@
     </div>
     
     <script>
-        // Toggle open race checkbox
-        function toggleOpenRace() {
-            const openCheckbox = document.getElementById('openRace');
+        // Toggle open race button
+        function toggleOpen() {
+            const openBtn = document.getElementById('openBtn');
             const raceInput = document.getElementById('raceTo');
-            if (openCheckbox.checked) {
+            
+            if (openBtn.classList.contains('selected')) {
+                openBtn.classList.remove('selected');
+                raceInput.disabled = false;
+                raceInput.focus();
+            } else {
+                openBtn.classList.add('selected');
                 raceInput.disabled = true;
                 raceInput.value = '';
-            } else {
-                raceInput.disabled = false;
             }
         }
         
@@ -327,9 +384,9 @@
             const player1 = document.getElementById('player1').value.trim() || 'Player 1';
             const player2 = document.getElementById('player2').value.trim() || 'Player 2';
             const gameType = document.querySelector('.game-type-btn.selected').dataset.game;
-            const openRace = document.getElementById('openRace').checked;
+            const openBtn = document.getElementById('openBtn');
             const raceToInput = document.getElementById('raceTo').value;
-            const raceTo = openRace ? 'open' : (raceToInput || 'open');
+            const raceTo = openBtn.classList.contains('selected') ? 'open' : (raceToInput || 'open');
             const breakRule = document.querySelector('.break-btn.selected').dataset.break;
             const firstBreaker = parseInt(document.querySelector('.first-break-btn.selected').dataset.breaker);
             
