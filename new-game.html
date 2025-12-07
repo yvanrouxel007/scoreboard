@@ -248,6 +248,56 @@
             transform: scale(0.98);
         }
         
+        .break-set-group {
+            display: none;
+            margin-top: 12px;
+        }
+        
+        .break-set-group.show {
+            display: block;
+        }
+        
+        .break-set-group.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .break-set-label {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .break-set-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .break-set-btn {
+            padding: 10px;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+        }
+        
+        .break-set-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .break-set-btn:active {
+            transform: scale(0.98);
+        }
+        
         .first-break-btn {
             padding: 12px;
             border: 2px solid #e5e5e5;
@@ -351,6 +401,15 @@
             <button class="break-btn" data-break="winner">Winner Breaks</button>
         </div>
         
+        <div class="break-set-group show" id="breakSetGroup">
+            <div class="break-set-label">Breaks per Set</div>
+            <div class="break-set-options">
+                <button class="break-set-btn selected" data-set="1">1</button>
+                <button class="break-set-btn" data-set="2">2</button>
+                <button class="break-set-btn" data-set="3">3</button>
+            </div>
+        </div>
+        
         <div class="section-title">First Break</div>
         <div class="break-options">
             <button class="first-break-btn selected" data-breaker="1" id="firstBreakP1">Player 1</button>
@@ -437,8 +496,33 @@
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.break-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
+                updateBreakSetVisibility();
             });
         });
+        
+        // Break set selection
+        document.querySelectorAll('.break-set-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.break-set-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+        });
+        
+        // Show/hide break set options based on break rule
+        function updateBreakSetVisibility() {
+            const breakRule = document.querySelector('.break-btn.selected').dataset.break;
+            const breakSetGroup = document.getElementById('breakSetGroup');
+            
+            if (breakRule === 'alternate') {
+                breakSetGroup.classList.add('show');
+                breakSetGroup.classList.remove('disabled');
+            } else {
+                breakSetGroup.classList.add('disabled');
+            }
+        }
+        
+        // Initialize break set visibility
+        updateBreakSetVisibility();
         
         // First break selection
         document.querySelectorAll('.first-break-btn').forEach(btn => {
@@ -467,6 +551,7 @@
             const raceToInput = document.getElementById('raceTo').value;
             const raceTo = openBtn.classList.contains('selected') ? 'open' : (raceToInput || 'open');
             const breakRule = document.querySelector('.break-btn.selected').dataset.break;
+            const breakSet = parseInt(document.querySelector('.break-set-btn.selected').dataset.set);
             const firstBreaker = parseInt(document.querySelector('.first-break-btn.selected').dataset.breaker);
             const pointsPerRack = document.getElementById('pointsPerRack').value || null;
             
@@ -476,9 +561,11 @@
                 gameType,
                 raceTo,
                 breakRule,
+                breakSet,
                 score1: 0,
                 score2: 0,
                 currentBreaker: firstBreaker,
+                breaksInSet: 0,
                 pointsPerRack: pointsPerRack ? parseInt(pointsPerRack) : null,
                 rackPoints1: 0,
                 rackPoints2: 0,

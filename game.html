@@ -517,8 +517,15 @@
                 
                 if (gameData.breakRule === 'winner') {
                     gameData.currentBreaker = 1;
+                    gameData.breaksInSet = 0;
                 } else {
-                    gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                    // Alternate break with break set
+                    gameData.breaksInSet = (gameData.breaksInSet || 0) + 1;
+                    
+                    if (gameData.breaksInSet >= (gameData.breakSet || 1)) {
+                        gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                        gameData.breaksInSet = 0;
+                    }
                 }
             } else {
                 gameData.score2++;
@@ -526,8 +533,15 @@
                 
                 if (gameData.breakRule === 'winner') {
                     gameData.currentBreaker = 2;
+                    gameData.breaksInSet = 0;
                 } else {
-                    gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                    // Alternate break with break set
+                    gameData.breaksInSet = (gameData.breaksInSet || 0) + 1;
+                    
+                    if (gameData.breaksInSet >= (gameData.breakSet || 1)) {
+                        gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                        gameData.breaksInSet = 0;
+                    }
                 }
             }
             
@@ -569,8 +583,15 @@
                     // Update breaker
                     if (gameData.breakRule === 'winner') {
                         gameData.currentBreaker = 1;
+                        gameData.breaksInSet = 0;
                     } else {
-                        gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                        // Alternate break with break set
+                        gameData.breaksInSet = (gameData.breaksInSet || 0) + 1;
+                        
+                        if (gameData.breaksInSet >= (gameData.breakSet || 1)) {
+                            gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                            gameData.breaksInSet = 0;
+                        }
                     }
                     updateBreakIndicator();
                     checkWinner();
@@ -591,8 +612,15 @@
                     // Update breaker
                     if (gameData.breakRule === 'winner') {
                         gameData.currentBreaker = 2;
+                        gameData.breaksInSet = 0;
                     } else {
-                        gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                        // Alternate break with break set
+                        gameData.breaksInSet = (gameData.breaksInSet || 0) + 1;
+                        
+                        if (gameData.breaksInSet >= (gameData.breakSet || 1)) {
+                            gameData.currentBreaker = gameData.currentBreaker === 1 ? 2 : 1;
+                            gameData.breaksInSet = 0;
+                        }
                     }
                     updateBreakIndicator();
                     checkWinner();
