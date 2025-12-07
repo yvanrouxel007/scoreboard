@@ -447,10 +447,52 @@
     
     <script>
         let gameData = JSON.parse(localStorage.getItem('currentGame'));
+        let wakeLock = null;
         
         if (!gameData) {
             window.location.href = 'new-game.html';
         }
+        
+        // Request wake lock to keep screen on during game
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake Lock active - screen will stay on');
+                    
+                    // Re-request wake lock if it's released (e.g., when switching tabs)
+                    wakeLock.addEventListener('release', () => {
+                        console.log('Wake Lock released');
+                    });
+                }
+            } catch (err) {
+                console.log('Wake Lock error:', err);
+            }
+        }
+        
+        // Release wake lock when leaving the page
+        function releaseWakeLock() {
+            if (wakeLock !== null) {
+                wakeLock.release()
+                    .then(() => {
+                        wakeLock = null;
+                        console.log('Wake Lock released manually');
+                    });
+            }
+        }
+        
+        // Request wake lock when page loads
+        requestWakeLock();
+        
+        // Re-request wake lock when page becomes visible again
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
+        });
+        
+        // Release wake lock when leaving the page
+        window.addEventListener('beforeunload', releaseWakeLock);
         
         // Initialize display
         const gameTypeNames = {
@@ -647,6 +689,7 @@
             document.getElementById('winnerScore').textContent = `${gameData.score1} - ${gameData.score2}`;
             document.getElementById('winnerModal').classList.add('show');
             
+            releaseWakeLock();
             saveToHistory();
         }
         
@@ -659,6 +702,7 @@
         }
         
         function endGameConfirmed() {
+            releaseWakeLock();
             saveToHistory();
             window.location.href = 'index.html';
         }
