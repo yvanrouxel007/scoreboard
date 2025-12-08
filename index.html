@@ -117,6 +117,131 @@
             padding-top: 16px;
             border-top: 1px solid #e5e5e5;
         }
+        
+        .install-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .install-link:hover {
+            text-decoration: underline;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .close-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .platform-section {
+            margin-bottom: 24px;
+        }
+        
+        .platform-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instruction-step {
+            margin-bottom: 12px;
+            padding-left: 24px;
+            position: relative;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .note {
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .icon-example {
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
@@ -136,9 +261,97 @@
         </button>
         
         <div class="footer">
+            <a class="install-link" onclick="openInstallModal()">📱 Install as App</a>
+            <br>
             Made by Yvan Rouxel
         </div>
     </div>
+    
+    <div class="modal" id="installModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Install as App</div>
+                <button class="close-btn" onclick="closeInstallModal()">×</button>
+            </div>
+            
+            <div class="platform-section">
+                <div class="platform-title">
+                    <span>🍎</span>
+                    <span>iOS (iPhone/iPad)</span>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">1</div>
+                    Open this page in <strong>Safari</strong> browser
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">2</div>
+                    Tap the <strong>Share</strong> button <span class="icon-example">⎋</span> at the bottom of the screen
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">3</div>
+                    Scroll down and tap <strong>"Add to Home Screen"</strong>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">4</div>
+                    Tap <strong>"Add"</strong> in the top right corner
+                </div>
+                <div class="note">
+                    💡 The app icon will appear on your home screen. Open it like any other app!
+                </div>
+            </div>
+            
+            <div class="platform-section">
+                <div class="platform-title">
+                    <span>🤖</span>
+                    <span>Android</span>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">1</div>
+                    Open this page in <strong>Chrome</strong> browser
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">2</div>
+                    Tap the <strong>three dots menu</strong> <span class="icon-example">⋮</span> in the top right
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">3</div>
+                    Select <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">4</div>
+                    Confirm by tapping <strong>"Add"</strong> or <strong>"Install"</strong>
+                </div>
+                <div class="note">
+                    💡 You can also tap the install banner that appears at the bottom of the screen!
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openInstallModal() {
+            document.getElementById('installModal').classList.add('show');
+        }
+        
+        function closeInstallModal() {
+            document.getElementById('installModal').classList.remove('show');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('installModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeInstallModal();
+            }
+        });
+
+        // Hide install link if app is already installed (running in standalone mode)
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            const installLink = document.querySelector('.install-link');
+            if (installLink) {
+                installLink.style.display = 'none';
+            }
+        }
+    </script>
     <script>
         // Register service worker for PWA
         if ('serviceWorker' in navigator) {
