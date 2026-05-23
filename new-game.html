@@ -482,20 +482,25 @@
             const pointsInput = document.getElementById('pointsPerRack');
             const variantGroup = document.getElementById('bankPoolVariantGroup');
             
-            if (gameType === '141' || gameType === 'bank' || gameType === 'onepocket') {
+            if (gameType === '141') {
+                // 14.1: Show Points per Rack input, hide variant
                 pointsGroup.classList.add('show');
-                // Set default values
-                if (gameType === '141') {
-                    pointsInput.value = 100;
-                    variantGroup.classList.remove('show');
-                } else if (gameType === 'bank') {
-                    variantGroup.classList.add('show');
-                    updateBankPoolPoints();
-                } else if (gameType === 'onepocket') {
-                    pointsInput.value = 8;
-                    variantGroup.classList.remove('show');
-                }
+                pointsInput.disabled = false;
+                pointsInput.value = 100;
+                variantGroup.classList.remove('show');
+            } else if (gameType === 'bank') {
+                // Bank Pool: Show variant selector, hide Points per Rack input
+                variantGroup.classList.add('show');
+                pointsGroup.classList.remove('show');
+                updateBankPoolPoints();
+            } else if (gameType === 'onepocket') {
+                // One Pocket: Show Points per Rack input, hide variant
+                pointsGroup.classList.add('show');
+                pointsInput.disabled = false;
+                pointsInput.value = 8;
+                variantGroup.classList.remove('show');
             } else {
+                // Other games: Hide both
                 pointsGroup.classList.remove('show');
                 pointsInput.value = '';
                 variantGroup.classList.remove('show');
