@@ -494,10 +494,9 @@
                 pointsGroup.classList.remove('show');
                 updateBankPoolPoints();
             } else if (gameType === 'onepocket') {
-                // One Pocket: Show Points per Rack input, hide variant
-                pointsGroup.classList.add('show');
-                pointsInput.disabled = false;
+                // One Pocket: Fixed at 8 points, hide input
                 pointsInput.value = 8;
+                pointsGroup.classList.remove('show');
                 variantGroup.classList.remove('show');
             } else {
                 // Other games: Hide both
