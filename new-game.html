@@ -249,6 +249,43 @@
             transform: scale(0.98);
         }
         
+        .bank-pool-variant-group {
+            display: none;
+        }
+        
+        .bank-pool-variant-group.show {
+            display: block;
+        }
+        
+        .variant-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .variant-btn {
+            padding: 12px;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+        }
+        
+        .variant-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .variant-btn:active {
+            transform: scale(0.98);
+        }
+        
         .break-set-group {
             display: none;
             margin-top: 12px;
@@ -391,6 +428,14 @@
             <button class="open-btn" id="openBtn" onclick="toggleOpen()">Open</button>
         </div>
         
+        <div class="bank-pool-variant-group" id="bankPoolVariantGroup">
+            <div class="section-title">Variant</div>
+            <div class="variant-options">
+                <button class="variant-btn selected" data-variant="9ball">9-Ball (First to 5)</button>
+                <button class="variant-btn" data-variant="15ball">15-Ball (First to 8)</button>
+            </div>
+        </div>
+        
         <div class="points-per-rack-group" id="pointsPerRackGroup">
             <div class="section-title">Points per Rack</div>
             <input type="number" id="pointsPerRack" class="points-per-rack-input" placeholder="Enter points" min="1" step="1" value="">
@@ -435,20 +480,36 @@
             const gameType = document.querySelector('.game-type-btn.selected').dataset.game;
             const pointsGroup = document.getElementById('pointsPerRackGroup');
             const pointsInput = document.getElementById('pointsPerRack');
+            const variantGroup = document.getElementById('bankPoolVariantGroup');
             
             if (gameType === '141' || gameType === 'bank' || gameType === 'onepocket') {
                 pointsGroup.classList.add('show');
                 // Set default values
                 if (gameType === '141') {
                     pointsInput.value = 100;
+                    variantGroup.classList.remove('show');
                 } else if (gameType === 'bank') {
-                    pointsInput.value = 8;
+                    variantGroup.classList.add('show');
+                    updateBankPoolPoints();
                 } else if (gameType === 'onepocket') {
                     pointsInput.value = 8;
+                    variantGroup.classList.remove('show');
                 }
             } else {
                 pointsGroup.classList.remove('show');
                 pointsInput.value = '';
+                variantGroup.classList.remove('show');
+            }
+        }
+        
+        function updateBankPoolPoints() {
+            const variant = document.querySelector('.variant-btn.selected')?.dataset.variant || '9ball';
+            const pointsInput = document.getElementById('pointsPerRack');
+            
+            if (variant === '9ball') {
+                pointsInput.value = 5;
+            } else if (variant === '15ball') {
+                pointsInput.value = 8;
             }
         }
         
@@ -509,6 +570,15 @@
             });
         });
         
+        // Bank Pool variant selection
+        document.querySelectorAll('.variant-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                updateBankPoolPoints();
+            });
+        });
+        
         // Show/hide break set options based on break rule
         function updateBreakSetVisibility() {
             const breakRule = document.querySelector('.break-btn.selected').dataset.break;
@@ -555,6 +625,7 @@
             const breakSet = parseInt(document.querySelector('.break-set-btn.selected').dataset.set);
             const firstBreaker = parseInt(document.querySelector('.first-break-btn.selected').dataset.breaker);
             const pointsPerRack = document.getElementById('pointsPerRack').value || null;
+            const bankPoolVariant = document.querySelector('.variant-btn.selected')?.dataset.variant || null;
             
             const gameData = {
                 player1,
@@ -568,6 +639,7 @@
                 currentBreaker: firstBreaker,
                 breaksInSet: 0,
                 pointsPerRack: pointsPerRack ? parseInt(pointsPerRack) : null,
+                bankPoolVariant: bankPoolVariant,
                 rackPoints1: 0,
                 rackPoints2: 0,
                 startTime: new Date().toISOString()

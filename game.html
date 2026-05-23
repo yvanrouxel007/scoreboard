@@ -548,7 +548,19 @@
         
         const raceText = gameData.raceTo === 'open' ? 'Open Race' : `Race to ${gameData.raceTo}`;
         const breakText = gameData.breakRule === 'alternate' ? 'Alternate Break' : 'Winner Breaks';
-        document.getElementById('raceInfo').textContent = `${raceText} • ${breakText}`;
+        
+        let raceInfo = `${raceText} • ${breakText}`;
+        
+        // Add Bank Pool variant info
+        if (gameData.gameType === 'bank' && gameData.bankPoolVariant) {
+            const variantNames = {
+                '9ball': '9-Ball (First to 5)',
+                '15ball': '15-Ball (First to 8)'
+            };
+            raceInfo += ` • ${variantNames[gameData.bankPoolVariant] || gameData.bankPoolVariant}`;
+        }
+        
+        document.getElementById('raceInfo').textContent = raceInfo;
         
         // Show rack points if applicable
         if (gameData.pointsPerRack) {
@@ -646,7 +658,7 @@
             if (!gameData.pointsPerRack) return;
             
             if (player === 1) {
-                gameData.rackPoints1 = Math.max(0, gameData.rackPoints1 + amount);
+                gameData.rackPoints1 = gameData.rackPoints1 + amount;
                 document.getElementById('rackPoints1').textContent = gameData.rackPoints1;
                 
                 // Check if rack is won
@@ -675,7 +687,7 @@
                     checkWinner();
                 }
             } else {
-                gameData.rackPoints2 = Math.max(0, gameData.rackPoints2 + amount);
+                gameData.rackPoints2 = gameData.rackPoints2 + amount;
                 document.getElementById('rackPoints2').textContent = gameData.rackPoints2;
                 
                 // Check if rack is won
