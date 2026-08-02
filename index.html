@@ -332,9 +332,6 @@
     
     <script>
         const APP_VERSION = '1.2';
-        const SW_VERSION = '1.2.1';
-        const SW_URL = new URL('sw.js', window.location.href);
-        SW_URL.searchParams.set('v', SW_VERSION);
 
         function openInstallModal() {
             document.getElementById('installModal').classList.add('show');
@@ -362,19 +359,10 @@
         }
     </script>
     <script>
-        // Register service worker for PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations()
                 .then(registrations => Promise.all(registrations.map(reg => reg.unregister())))
-                .then(() => navigator.serviceWorker.register(SW_URL.href))
-                .then(registration => {
-                    console.log('Service Worker registered');
-
-                    navigator.serviceWorker.addEventListener('controllerchange', () => {
-                        window.location.reload();
-                    });
-                })
-                .catch(err => console.log('Service Worker registration failed:', err));
+                .catch(err => console.log('Service Worker unregistration failed:', err));
         }
     </script>
 </body>
