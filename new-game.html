@@ -472,8 +472,27 @@
                 document.querySelectorAll('.game-type-btn').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 updatePointsPerRackVisibility();
+                updateDefaultRaceTo();
             });
         });
+        
+        function updateDefaultRaceTo() {
+            const gameType = document.querySelector('.game-type-btn.selected').dataset.game;
+            const raceInput = document.getElementById('raceTo');
+            const openBtn = document.getElementById('openBtn');
+            
+            if (openBtn.classList.contains('selected')) {
+                return;
+            }
+            
+            if (gameType === '141') {
+                raceInput.value = '1';
+            } else if (gameType === 'bank' || gameType === 'onepocket') {
+                raceInput.value = '3';
+            } else {
+                raceInput.value = '';
+            }
+        }
         
         // Show/hide points per rack based on game type
         function updatePointsPerRackVisibility() {
@@ -598,6 +617,7 @@
         
         // Initialize break set visibility
         updateBreakSetVisibility();
+        updateDefaultRaceTo();
         
         // First break selection
         document.querySelectorAll('.first-break-btn').forEach(btn => {
@@ -651,14 +671,6 @@
             
             localStorage.setItem('currentGame', JSON.stringify(gameData));
             window.location.href = 'game.html';
-        }
-    </script>
-    <script>
-        // Register service worker for PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('Service Worker registered'))
-                .catch(err => console.log('Service Worker registration failed:', err));
         }
     </script>
 </body>
