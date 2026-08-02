@@ -1,11 +1,13 @@
 // Service Worker for PWA
-const CACHE_NAME = 'scoreboard-v3';
+const CACHE_NAME = 'scoreboard-v4';
+const scopeUrl = new URL('./', self.location);
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/new-game.html',
-  '/game.html',
-  '/history.html'
+  scopeUrl.href,
+  new URL('./index.html', self.location).href,
+  new URL('./new-game.html', self.location).href,
+  new URL('./game.html', self.location).href,
+  new URL('./history.html', self.location).href,
+  new URL('./version.json', self.location).href
 ];
 
 self.addEventListener('install', event => {
@@ -25,16 +27,32 @@ self.addEventListener('message', event => {
 self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .catch(() => caches.match('/game.html'))
-        .catch(() => caches.match('/index.html'))
+      fetch(event.request, { cache: 'no-store' })
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(new URL('./index.html', self.location).href))
+        .catch(() => caches.match(new URL('./game.html', self.location).href))
     );
     return;
   }
 
   event.respondWith(
     caches.match(event.request)
-      .then(response => response || fetch(event.request))
+      .then(response => {
+        if (response) {
+          return response;
+        }
+
+        return fetch(event.request, { cache: 'no-store' })
+          .then(networkResponse => {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+            return networkResponse;
+          });
+      })
   );
 });
 
