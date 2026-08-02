@@ -242,6 +242,31 @@
         .icon-example {
             font-size: 20px;
         }
+
+        .update-banner {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin: 12px 0 0;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .update-banner button {
+            border: none;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -260,12 +285,17 @@
             <span>Game History</span>
         </button>
         
+        <div id="updateBanner" class="update-banner" hidden>
+            <span>A newer version is available.</span>
+            <button onclick="refreshApp()">Refresh</button>
+        </div>
+
         <div class="footer">
             <a class="install-link" onclick="openInstallModal()">📱 Install as App</a>
             <br>
             Made by Yvan Rouxel
             <br>
-            <span id="version" style="font-size: 12px; color: #ccc; margin-top: 8px; display: block;">v1.1.1</span>
+            <span id="version" style="font-size: 12px; color: #ccc; margin-top: 8px; display: block;">v1.2</span>
         </div>
     </div>
     
@@ -331,6 +361,8 @@
     </div>
     
     <script>
+        const APP_VERSION = '1.2';
+
         function openInstallModal() {
             document.getElementById('installModal').classList.add('show');
         }
@@ -338,6 +370,28 @@
         function closeInstallModal() {
             document.getElementById('installModal').classList.remove('show');
         }
+
+        function showUpdateBanner() {
+            const banner = document.getElementById('updateBanner');
+            if (banner) {
+                banner.hidden = false;
+            }
+        }
+
+        function refreshApp() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(reg => {
+                    if (reg && reg.waiting) {
+                        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                    window.location.reload();
+                });
+            } else {
+                window.location.reload();
+            }
+        }
+
+        document.getElementById('version').textContent = `v${APP_VERSION}`;
         
         // Close modal when clicking outside
         document.getElementById('installModal').addEventListener('click', function(e) {
@@ -358,7 +412,28 @@
         // Register service worker for PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('Service Worker registered'))
+                .then(registration => {
+                    console.log('Service Worker registered');
+
+                    if (registration.waiting) {
+                        showUpdateBanner();
+                    }
+
+                    registration.addEventListener('updatefound', () => {
+                        const installing = registration.installing;
+                        if (!installing) return;
+
+                        installing.addEventListener('statechange', () => {
+                            if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                                showUpdateBanner();
+                            }
+                        });
+                    });
+
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                        window.location.reload();
+                    });
+                })
                 .catch(err => console.log('Service Worker registration failed:', err));
         }
     </script>
