@@ -360,9 +360,8 @@
     </script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations()
-                .then(registrations => Promise.all(registrations.map(reg => reg.unregister())))
-                .catch(err => console.log('Service Worker unregistration failed:', err));
+            navigator.serviceWorker.register('/sw.js')
+                .catch(err => console.log('Service Worker registration failed:', err));
         }
     </script>
 </body>
