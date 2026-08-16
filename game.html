@@ -591,7 +591,13 @@
     </div>
     
     <script>
-        let gameData = JSON.parse(localStorage.getItem('currentGame'));
+        let gameData;
+        try {
+            gameData = JSON.parse(localStorage.getItem('currentGame'));
+        } catch (err) {
+            console.log('Failed to parse saved game, starting over:', err);
+            gameData = null;
+        }
         let wakeLock = null;
         let noSleepVideo = null;
         let gameEnded = false;
@@ -833,13 +839,20 @@
                     }
                 }
             }
-            
+
+            if (gameData.pointsPerRack) {
+                gameData.rackPoints1 = 0;
+                gameData.rackPoints2 = 0;
+                document.getElementById('rackPoints1').textContent = 0;
+                document.getElementById('rackPoints2').textContent = 0;
+            }
+
             updateBreakIndicator();
             localStorage.setItem('currentGame', JSON.stringify(gameData));
-            
+
             checkWinner();
         }
-        
+
         function adjustScore(player, amount) {
             if (isRaceToOne141) {
                 adjustRackPoints(player, amount);
@@ -854,10 +867,17 @@
                 document.getElementById('score2').textContent = gameData.score2;
             }
             
+            if (gameData.pointsPerRack) {
+                gameData.rackPoints1 = 0;
+                gameData.rackPoints2 = 0;
+                document.getElementById('rackPoints1').textContent = 0;
+                document.getElementById('rackPoints2').textContent = 0;
+            }
+
             updateRackNumber();
             localStorage.setItem('currentGame', JSON.stringify(gameData));
         }
-        
+
         function adjustRackPoints(player, amount) {
             if (!gameData.pointsPerRack) return;
             
