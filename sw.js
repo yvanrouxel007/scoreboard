@@ -1,5 +1,5 @@
 // Service Worker for PWA — offline-first
-const CACHE_NAME = 'scoreboard-v5';
+const CACHE_NAME = 'scoreboard-v6';
 const scopeUrl = new URL('./', self.location);
 const PRECACHE_URLS = [
   scopeUrl.href,
@@ -9,6 +9,8 @@ const PRECACHE_URLS = [
   new URL('./history.html', self.location).href,
   new URL('./manifest.json', self.location).href,
   new URL('./version.json', self.location).href,
+  new URL('./shared.css', self.location).href,
+  new URL('./shared.js', self.location).href,
   new URL('./icon-192.png', self.location).href,
   new URL('./icon-512.png', self.location).href,
   new URL('./favicon.ico', self.location).href
