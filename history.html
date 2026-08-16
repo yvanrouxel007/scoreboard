@@ -2,25 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game History - Pool Scoreboard</title>
     <meta name="description" content="View your past pool games">
     <meta name="author" content="Yvan Rouxel">
     <meta name="theme-color" content="#667eea">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="shared.css">
     <style>
-        html {
-            background: #667eea;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -31,7 +21,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .container {
             background: white;
             border-radius: 24px;
@@ -43,32 +33,7 @@
             max-height: calc(100vh - 32px);
             overflow-y: auto;
         }
-        
-        .back-button {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: #667eea;
-            color: white;
-            border: none;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s;
-        }
-        
-        .back-button:active {
-            transform: scale(0.95);
-            background: #764ba2;
-        }
-        
+
         h1 {
             color: #1a1a1a;
             text-align: center;
@@ -106,7 +71,7 @@
             align-items: center;
             margin-bottom: 12px;
         }
-        
+
         .game-type-badge {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -115,10 +80,31 @@
             font-size: 13px;
             font-weight: 600;
         }
-        
+
+        .game-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .game-date {
             font-size: 13px;
             color: #666;
+        }
+
+        .delete-game-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            line-height: 1;
+            padding: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .delete-game-btn:active {
+            opacity: 1;
         }
         
         .game-details {
@@ -197,23 +183,6 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        
-        .modal.show {
-            display: flex;
-        }
-        
         .modal-content {
             background: white;
             padding: 32px;
@@ -241,29 +210,9 @@
             margin-bottom: 24px;
         }
         
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-        }
-        
-        .modal-btn {
-            flex: 1;
-            padding: 16px;
-            border-radius: 12px;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        
         .modal-btn-primary {
             background: #dc3545;
             color: white;
-        }
-        
-        .modal-btn-secondary {
-            background: #e5e5e5;
-            color: #333;
         }
     </style>
 </head>
@@ -279,15 +228,16 @@
     <div class="modal" id="clearModal">
         <div class="modal-content">
             <div class="modal-emoji">⚠️</div>
-            <div class="modal-text">Clear History?</div>
-            <div class="modal-subtitle">Are you sure you want to clear all game history? This cannot be undone.</div>
+            <div class="modal-text" id="clearModalText">Clear History?</div>
+            <div class="modal-subtitle" id="clearModalSubtitle">Are you sure you want to clear all game history? This cannot be undone.</div>
             <div class="modal-buttons">
                 <button class="modal-btn modal-btn-secondary" onclick="closeClearModal()">Cancel</button>
-                <button class="modal-btn modal-btn-primary" onclick="confirmClearHistory()">Clear All</button>
+                <button class="modal-btn modal-btn-primary" id="clearConfirmBtn" onclick="confirmClearHistory()">Clear All</button>
             </div>
         </div>
     </div>
-    
+
+    <script src="shared.js"></script>
     <script>
         let history;
         try {
@@ -296,16 +246,7 @@
             console.log('Failed to parse game history, resetting:', err);
             history = [];
         }
-        
-        const gameTypeNames = {
-            '8ball': '8-Ball',
-            '9ball': '9-Ball',
-            '10ball': '10-Ball',
-            '141': '14.1',
-            'bank': 'Bank Pool',
-            'onepocket': 'One Pocket'
-        };
-        
+
         function escapeHtml(str) {
             const div = document.createElement('div');
             div.textContent = str;
@@ -341,16 +282,19 @@
             
             let html = '<button class="clear-history-btn" onclick="clearHistory()">Clear All History</button>';
             
-            history.forEach(game => {
+            history.forEach((game, index) => {
                 const winner = game.score1 > game.score2 ? 1 : (game.score2 > game.score1 ? 2 : 0);
                 const raceText = game.raceTo === 'open' ? 'Open' : `Race ${game.raceTo}`;
                 const breakText = game.breakRule === 'alternate' ? 'Alt Break' : 'Winner Breaks';
-                
+
                 html += `
                     <div class="game-card">
                         <div class="game-header">
                             <span class="game-type-badge">${gameTypeNames[game.gameType]}</span>
-                            <span class="game-date">${formatDate(game.startTime)}</span>
+                            <div class="game-header-right">
+                                <span class="game-date">${formatDate(game.startTime)}</span>
+                                <button class="delete-game-btn" onclick="requestDeleteGame(${index})" aria-label="Delete game">🗑</button>
+                            </div>
                         </div>
                         <div class="game-details">
                             <div class="player-info">
@@ -371,26 +315,39 @@
             container.innerHTML = html;
         }
         
+        let pendingDeleteIndex = null;
+
         function clearHistory() {
+            pendingDeleteIndex = null;
+            document.getElementById('clearModalText').textContent = 'Clear History?';
+            document.getElementById('clearModalSubtitle').textContent = 'Are you sure you want to clear all game history? This cannot be undone.';
+            document.getElementById('clearConfirmBtn').textContent = 'Clear All';
             document.getElementById('clearModal').classList.add('show');
         }
-        
+
+        function requestDeleteGame(index) {
+            pendingDeleteIndex = index;
+            document.getElementById('clearModalText').textContent = 'Delete Game?';
+            document.getElementById('clearModalSubtitle').textContent = 'Are you sure you want to delete this game from history?';
+            document.getElementById('clearConfirmBtn').textContent = 'Delete';
+            document.getElementById('clearModal').classList.add('show');
+        }
+
         function closeClearModal() {
             document.getElementById('clearModal').classList.remove('show');
         }
-        
+
         function confirmClearHistory() {
-            localStorage.removeItem('gameHistory');
+            if (pendingDeleteIndex === null) {
+                localStorage.removeItem('gameHistory');
+            } else {
+                history.splice(pendingDeleteIndex, 1);
+                localStorage.setItem('gameHistory', JSON.stringify(history));
+            }
             window.location.reload();
         }
-        
+
         renderHistory();
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .catch(err => console.log('Service Worker registration failed:', err));
-        }
     </script>
 </body>
 </html>
