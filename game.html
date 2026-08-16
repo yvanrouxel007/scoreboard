@@ -187,10 +187,8 @@
             gap: 6px;
             animation: breakPulse 2s ease-in-out infinite;
             border: 2px solid #000;
-            opacity: 0;
-            pointer-events: none;
         }
-        
+
         .break-indicator.active {
             display: flex;
         }
@@ -356,7 +354,12 @@
         html.is-race-to-one-141 .score-display-wrapper.is-special {
             min-height: 140px;
         }
-        
+
+        html.is-race-to-one-141 .break-indicator {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .quick-point-btn {
             min-width: 54px;
             padding: 8px 10px;
