@@ -289,7 +289,13 @@
     </div>
     
     <script>
-        const history = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+        let history;
+        try {
+            history = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+        } catch (err) {
+            console.log('Failed to parse game history, resetting:', err);
+            history = [];
+        }
         
         const gameTypeNames = {
             '8ball': '8-Ball',
@@ -300,6 +306,12 @@
             'onepocket': 'One Pocket'
         };
         
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         function formatDate(isoString) {
             const date = new Date(isoString);
             return date.toLocaleDateString('en-US', { 
@@ -342,12 +354,12 @@
                         </div>
                         <div class="game-details">
                             <div class="player-info">
-                                <div class="player-name ${winner === 1 ? 'winner' : ''}">${game.player1}</div>
+                                <div class="player-name ${winner === 1 ? 'winner' : ''}">${escapeHtml(game.player1)}</div>
                                 <div class="score ${winner === 1 ? 'winner' : ''}">${game.score1}</div>
                             </div>
                             <div class="vs">-</div>
                             <div class="player-info">
-                                <div class="player-name ${winner === 2 ? 'winner' : ''}">${game.player2}</div>
+                                <div class="player-name ${winner === 2 ? 'winner' : ''}">${escapeHtml(game.player2)}</div>
                                 <div class="score ${winner === 2 ? 'winner' : ''}">${game.score2}</div>
                             </div>
                         </div>
