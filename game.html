@@ -594,6 +594,7 @@
         let gameData = JSON.parse(localStorage.getItem('currentGame'));
         let wakeLock = null;
         let noSleepVideo = null;
+        let gameEnded = false;
         
         if (!gameData) {
             window.location.href = 'new-game.html';
@@ -887,6 +888,7 @@
                     }
                     updateBreakIndicator();
                     checkWinner();
+                    if (gameEnded) return;
                 }
             } else {
                 gameData.rackPoints2 = gameData.rackPoints2 + amount;
@@ -915,6 +917,7 @@
                     }
                     updateBreakIndicator();
                     checkWinner();
+                    if (gameEnded) return;
                 }
             }
 
@@ -925,6 +928,7 @@
         }
         
         function checkWinner() {
+            if (gameEnded) return;
             if (gameData.raceTo === 'open') return;
             
             const target = parseInt(gameData.raceTo);
@@ -936,6 +940,7 @@
         }
         
         function showWinner(player) {
+            gameEnded = true;
             const winner = player === 1 ? gameData.player1 : gameData.player2;
             document.getElementById('winnerText').textContent = `${winner} Wins!`;
             document.getElementById('winnerScore').textContent = `${gameData.score1} - ${gameData.score2}`;
@@ -971,6 +976,12 @@
             
             localStorage.setItem('gameHistory', JSON.stringify(history));
             localStorage.removeItem('currentGame');
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .catch(err => console.log('Service Worker registration failed:', err));
         }
     </script>
 </body>
