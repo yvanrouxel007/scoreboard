@@ -318,7 +318,62 @@
                 font-size: 20px;
             }
         }
-        
+
+        /* Larger screens have room to make the score much more prominent */
+        @media (min-width: 900px) {
+            .score-display {
+                font-size: 240px;
+            }
+
+            .rack-points-display {
+                font-size: 100px;
+            }
+
+            .rack-number {
+                font-size: 28px;
+            }
+        }
+
+        /* Short viewports (landscape phones) don't have room for the full-size
+           14.1 race-to-1 special layout - shrink just that layout so it
+           doesn't overlap the player name. Other game types already fit
+           comfortably at this height, so they're left untouched. */
+        @media (max-height: 420px) {
+            html.is-race-to-one-141 .player-name {
+                font-size: 24px;
+                margin-bottom: 4px;
+            }
+
+            .score-display-wrapper.is-special .score-display {
+                font-size: 72px;
+            }
+
+            .score-controls.is-special {
+                gap: 6px;
+                top: 52%;
+            }
+
+            .score-display-wrapper.is-special {
+                min-height: 72px;
+            }
+
+            .quick-points-row {
+                margin-top: 4px;
+            }
+
+            .quick-point-btn {
+                min-width: 38px;
+                padding: 4px 6px;
+                font-size: 10px;
+            }
+
+            .score-adjusters.is-special .score-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+        }
+
         .quick-points-row {
             display: none;
             flex-wrap: nowrap;
