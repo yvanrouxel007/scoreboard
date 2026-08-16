@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Game - Pool Scoreboard</title>
     <meta name="description" content="Track your pool game">
     <meta name="author" content="Yvan Rouxel">
@@ -55,6 +55,9 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 10px 12px;
+            padding-top: max(10px, env(safe-area-inset-top));
+            padding-left: max(12px, env(safe-area-inset-left));
+            padding-right: max(12px, env(safe-area-inset-right));
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -100,6 +103,9 @@
         .footer {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 10px 12px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            padding-left: max(12px, env(safe-area-inset-left));
+            padding-right: max(12px, env(safe-area-inset-right));
             display: flex;
             justify-content: center;
             align-items: center;
@@ -467,10 +473,15 @@
             .players-container {
                 flex-direction: row;
             }
-            
+
             .player-section:first-child {
                 border-bottom: none;
                 border-right: 4px solid #1a1a1a;
+                padding-left: max(10px, env(safe-area-inset-left));
+            }
+
+            .player-section:last-child {
+                padding-right: max(10px, env(safe-area-inset-right));
             }
         }
         
