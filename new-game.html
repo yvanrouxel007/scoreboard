@@ -369,12 +369,12 @@
         
         <div class="form-group">
             <label>Player 1 / Team 1 Name</label>
-            <input type="text" id="player1" placeholder="Enter name" value="Player 1">
+            <input type="text" id="player1" placeholder="Enter name" value="Player1">
         </div>
         
         <div class="form-group">
             <label>Player 2 / Team 2 Name</label>
-            <input type="text" id="player2" placeholder="Enter name" value="Player 2">
+            <input type="text" id="player2" placeholder="Enter name" value="Player2">
         </div>
         
         <div class="section-title">Game Type</div>
@@ -582,10 +582,28 @@
             }
         }
         
+        // Prefill player names from the most recently played game, if any
+        function prefillPlayerNames() {
+            try {
+                const history = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+                const lastGame = history[0];
+                if (lastGame && lastGame.player1) {
+                    document.getElementById('player1').value = lastGame.player1;
+                }
+                if (lastGame && lastGame.player2) {
+                    document.getElementById('player2').value = lastGame.player2;
+                }
+            } catch (err) {
+                console.log('Failed to prefill player names from history:', err);
+            }
+        }
+
         // Initialize break set visibility
         updateBreakSetVisibility();
         updateDefaultRaceTo();
-        
+        prefillPlayerNames();
+        updateFirstBreakLabels();
+
         // First break selection
         document.querySelectorAll('.first-break-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -596,8 +614,8 @@
         
         // Update first break button labels when player names change
         function updateFirstBreakLabels() {
-            const p1Name = document.getElementById('player1').value.trim() || 'Player 1';
-            const p2Name = document.getElementById('player2').value.trim() || 'Player 2';
+            const p1Name = document.getElementById('player1').value.trim() || 'Player1';
+            const p2Name = document.getElementById('player2').value.trim() || 'Player2';
             document.getElementById('firstBreakP1').textContent = p1Name;
             document.getElementById('firstBreakP2').textContent = p2Name;
         }
@@ -606,8 +624,8 @@
         document.getElementById('player2').addEventListener('input', updateFirstBreakLabels);
         
         function startGame() {
-            const player1 = document.getElementById('player1').value.trim() || 'Player 1';
-            const player2 = document.getElementById('player2').value.trim() || 'Player 2';
+            const player1 = document.getElementById('player1').value.trim() || 'Player1';
+            const player2 = document.getElementById('player2').value.trim() || 'Player2';
             const gameType = document.querySelector('.game-type-btn.selected').dataset.game;
             const openBtn = document.getElementById('openBtn');
             const raceToInput = document.getElementById('raceTo').value;
