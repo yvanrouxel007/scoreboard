@@ -327,6 +327,25 @@
             }
         }
 
+        /* Portrait panels have more room per player than landscape at the
+           same screen size - give the score a modest bump there, so it's
+           the one intentional difference between the two orientations. */
+        @media (orientation: portrait) {
+            .score-display {
+                font-size: 158px;
+            }
+
+            .rack-points-display {
+                font-size: 68px;
+            }
+        }
+
+        @media (orientation: portrait) and (max-width: 375px) {
+            .score-display {
+                font-size: 104px;
+            }
+        }
+
         /* Larger screens have room to make the score much more prominent */
         @media (min-width: 900px) and (min-height: 481px) {
             .score-display {
