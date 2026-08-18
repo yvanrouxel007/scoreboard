@@ -216,12 +216,14 @@
         }
 
         .score-controls.is-special {
+            position: static;
             flex-direction: column;
             gap: 12px;
             width: auto;
             align-items: center;
-            top: 60%;
-            transform: translate(-50%, -50%);
+            left: auto;
+            top: auto;
+            transform: none;
         }
         
         .rack-points-control {
@@ -303,7 +305,6 @@
 
             .score-controls.is-special {
                 gap: 8px;
-                top: 58%;
             }
 
             .score-display-wrapper.is-special {
@@ -377,7 +378,6 @@
 
             .score-controls.is-special {
                 gap: 8px;
-                top: 58%;
             }
 
             .score-display-wrapper.is-special {
@@ -417,6 +417,10 @@
 
         html.is-race-to-one-141 .quick-points-row {
             display: flex;
+        }
+
+        html.is-race-to-one-141 .player-section {
+            justify-content: space-evenly;
         }
 
         html.is-race-to-one-141 .rack-points-control {
