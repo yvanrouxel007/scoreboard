@@ -483,6 +483,30 @@
             .player-section:last-child {
                 padding-right: max(10px, env(safe-area-inset-right));
             }
+
+            /* The special 14.1 layout stays a narrow vertical column even
+               though landscape panels are wide - spread it out so it uses
+               the available width instead of floating in a strip down the
+               middle, matching how portrait fills its narrower panel. */
+            .quick-points-row {
+                gap: 8px;
+            }
+
+            .quick-point-btn {
+                min-width: 46px;
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .score-adjusters.is-special {
+                gap: 14px;
+            }
+
+            .score-adjusters.is-special .score-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 21px;
+            }
         }
         
         .modal-content {
